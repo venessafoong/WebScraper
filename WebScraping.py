@@ -8,6 +8,11 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 
+# Global variables
+names = []
+addresses = []
+prices = []
+
 # Prep URL
 def get_url() -> str:
     base_url = "https://www.propertyguru.com.sg/property-for-sale"
@@ -23,15 +28,10 @@ def get_url() -> str:
     req.prepare_url(base_url, filter_params)
     return req.url
 
-
-def scrape_webpage(url) -> dict:
+def scrape_webpage(url):
     reponse = requests.get(url = url, impersonate="chrome120")
     soup = BeautifulSoup(reponse.text, features='html.parser')
-    
     listings = soup.find_all('div', class_ = 'listing-card')
-    names = []
-    addresses = []
-    prices = []
     for listing in listings:
         name = listing.find('a', class_ = 'nav-link')
         names.append(name.text)
@@ -39,7 +39,6 @@ def scrape_webpage(url) -> dict:
         addresses.append(address.text)
         price = listing.find('li', class_ = 'list-price')
         prices.append(price.text)
-    create_table(names, addresses, prices)
     next_page(soup)
 
 def next_page(soup):
@@ -52,17 +51,17 @@ def next_page(soup):
     else:
         print('There is no next page')
 
-def create_table(names, addresses, prices):
-    # for item in data:
-        df = pd.DataFrame
-        ({'Name': names,
-          'Address': addresses,
-          'Price': prices
-          })
-        print(df)
+def create_table():
+    df = pd.DataFrame({'Name': names,
+                       'Address': addresses,
+                       'Price': prices
+                       })
+    df.to_excel('properties.xlsx', index=False)
+    print("DataFrame is written to Excel File successfully.")
 
 url = get_url()
-data = scrape_webpage(url)
+scrape_webpage(url)
+create_table()
 
 # # Selenium
 # def go_to_next_page(url):
