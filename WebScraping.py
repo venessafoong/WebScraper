@@ -1,3 +1,4 @@
+from enum import Enum
 from requests.models import PreparedRequest
 from bs4 import BeautifulSoup
 from curl_cffi import requests
@@ -13,15 +14,26 @@ names = []
 addresses = []
 prices = []
 
+# Filter parameters
+class ListingType(Enum):
+        sale = 'sale'
+        rent = 'rent'
+
+class Filters:
+    listing_type = ListingType.sale.name
+    min_price = 0
+    max_price = 0
+    rooms = []
+
 # Prep URL
-def get_url() -> str:
+def get_url(filter) -> str:
     base_url = "https://www.propertyguru.com.sg/property-for-sale"
     filter_params = {
-            "listing_type": 'sale',
-            "market": 'residential',
-            "maxprice": 400000,
+            "listing_type": filter.listing_type,
+            "maxprice": filter.max_price,
             # "beds[]": 2,
             # "beds[]": 3,
+            "market": 'residential',
             "search": 'true'
         }
     req = PreparedRequest()
@@ -42,24 +54,26 @@ def scrape_webpage(url):
     next_page(soup)
 
 def next_page(soup):
-    next_button = soup.find('li', class_ = 'pagination-next')
-    if next_button:
+    disabled_next_button = soup.find_all(class_=["pagination-next", "disabled"])
+    if disabled_next_button:  # Check for next page
+        print("There is no more next page")
+    else:
+        next_button = soup.find('li', class_ = 'pagination-next')
         next_link = next_button.find('a').get('href')
         url = "https://www.propertyguru.com.sg" + next_link
         print(url)
         scrape_webpage(url)
-    else:
-        print('There is no next page')
 
 def create_table():
     df = pd.DataFrame({'Name': names,
                        'Address': addresses,
-                       'Price': prices
-                       })
+                       'Price': prices})
     df.to_excel('properties.xlsx', index=False)
     print("DataFrame is written to Excel File successfully.")
 
-url = get_url()
+filters = Filters()
+filters.max_price = '300000'
+url = get_url(filters)
 scrape_webpage(url)
 create_table()
 
