@@ -3,11 +3,7 @@ from requests.models import PreparedRequest
 from bs4 import BeautifulSoup
 from curl_cffi import requests
 import pandas as pd
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-from webdriver_manager.chrome import ChromeDriverManager
+import user_filter
 
 # Global variables
 names = []
@@ -16,14 +12,22 @@ prices = []
 
 # Filter parameters
 class ListingType(Enum):
-        sale = 'sale'
-        rent = 'rent'
+    sale = 'buy'
+    rent = 'rent'
 
 class Filters:
-    listing_type = ListingType.sale.name
+    listing_type = ""
     min_price = 0
     max_price = 0
     rooms = []
+
+    def __init__(self, listing_type, min_price, max_price):
+        self.min_price = min_price
+        self.max_price = max_price
+        if listing_type == ListingType.sale.value:
+            self.listing_type = ListingType.sale.name
+        else:
+            self.listing_type = listing_type
 
 # Prep URL
 def get_url(filter) -> str:
@@ -71,13 +75,19 @@ def create_table():
     df.to_excel('properties.xlsx', index=False)
     print("DataFrame is written to Excel File successfully.")
 
-filters = Filters()
-filters.max_price = '300000'
+filters = Filters(listing_type=user_filter.listing,
+                  min_price=user_filter.min_price,
+                  max_price=user_filter.max_price)
 url = get_url(filters)
 scrape_webpage(url)
 create_table()
 
 # # Selenium
+# from selenium import webdriver
+# from selenium.webdriver.common.by import By
+# from selenium.webdriver.chrome.service import Service
+# from selenium.webdriver.chrome.options import Options
+# from webdriver_manager.chrome import ChromeDriverManager
 # def go_to_next_page(url):
 #     # Keep windows open
 #     options = Options()
