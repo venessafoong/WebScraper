@@ -6,9 +6,9 @@ import pandas as pd
 import user_filter
 
 # Global variables
-names = []
-addresses = []
-prices = []
+NAMES = []
+ADDRESSES = []
+PRICES = []
 
 # Filter parameters
 class ListingType(Enum):
@@ -50,11 +50,11 @@ def scrape_webpage(url):
     listings = soup.find_all('div', class_ = 'listing-card')
     for listing in listings:
         name = listing.find('a', class_ = 'nav-link')
-        names.append(name.text)
+        NAMES.append(name.text)
         address = listing.find('p', class_ = 'listing-location')
-        addresses.append(address.text)
+        ADDRESSES.append(address.text)
         price = listing.find('li', class_ = 'list-price')
-        prices.append(price.text)
+        PRICES.append(price.text)
     next_page(soup)
 
 def next_page(soup):
@@ -69,18 +69,18 @@ def next_page(soup):
         scrape_webpage(url)
 
 def create_table():
-    df = pd.DataFrame({'Name': names,
-                       'Address': addresses,
-                       'Price': prices})
+    df = pd.DataFrame({'Name': NAMES,
+                       'Address': ADDRESSES,
+                       'Price': PRICES})
     df.to_excel('properties.xlsx', index=False)
     print("DataFrame is written to Excel File successfully.")
 
 filters = Filters(listing_type=user_filter.listing,
                   min_price=user_filter.min_price,
                   max_price=user_filter.max_price)
-url = get_url(filters)
-scrape_webpage(url)
-create_table()
+# url = get_url(filters)
+# scrape_webpage(url)
+# create_table()
 
 # # Selenium
 # from selenium import webdriver
