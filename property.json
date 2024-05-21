@@ -1,0 +1,34 @@
+{
+    "property": [
+        {
+            "id": 1,
+            "address": "property.address",
+            "price": "property.price"
+        },
+        {
+            "id": 2,
+            "address": "address",
+            "price": 999999
+        },
+        {
+            "id": 2,
+            "address": "address",
+            "price": 8888
+        },
+        {
+            "id": 3,
+            "address": "address",
+            "price": 77777
+        },
+        {
+            "id": 4,
+            "address": "address",
+            "price": 2000000
+        },
+        {
+            "id": 5,
+            "address": "address",
+            "price": 2000000
+        }
+    ]
+}
