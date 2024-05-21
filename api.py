@@ -14,7 +14,7 @@ async def get_addresses():
 
 # Add a property
 @app.post('/property/add')
-async def add(property: Property):
+async def addProperty(property: Property):
     new_property = {
         "id": max([p['id'] for p in properties['property']]) + 1,
         "address": property.address,

@@ -4,6 +4,8 @@ from bs4 import BeautifulSoup
 from curl_cffi import requests
 import pandas as pd
 import user_filter
+from models import Property
+from api import addProperty
 
 # Global variables
 NAMES = []
@@ -49,13 +51,18 @@ def scrape_webpage(url):
     soup = BeautifulSoup(reponse.text, features='html.parser')
     listings = soup.find_all('div', class_ = 'listing-card')
     for listing in listings:
-        name = listing.find('a', class_ = 'nav-link')
-        NAMES.append(name.text)
         address = listing.find('p', class_ = 'listing-location')
-        ADDRESSES.append(address.text)
         price = listing.find('li', class_ = 'list-price')
-        PRICES.append(price.text)
-    next_page(soup)
+        if address != None and price != None:
+            property = Property(address=address.text, price=price.text)
+            property = {
+                "address": address.text,
+                "price": price.text
+            }
+            reponse = requests.post("http://localhost:8000/property/add", json=property)
+        else: 
+            print("No properties found")
+    # next_page(soup)
 
 def next_page(soup):
     disabled_next_button = soup.find_all(class_=["pagination-next", "disabled"])
@@ -78,8 +85,8 @@ def create_table():
 filters = Filters(listing_type=user_filter.listing,
                   min_price=user_filter.min_price,
                   max_price=user_filter.max_price)
-# url = get_url(filters)
-# scrape_webpage(url)
+url = get_url(filters)
+scrape_webpage(url)
 # create_table()
 
 # # Selenium

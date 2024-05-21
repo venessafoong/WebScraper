@@ -4,7 +4,7 @@ from typing import Optional
 class Property(BaseModel):
     id: Optional[int] = None
     address: str
-    price: int
+    price: str
 
     class Config:
         arbitrary_types_allowed = True
