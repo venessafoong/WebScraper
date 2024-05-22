@@ -15,6 +15,25 @@ def get_listingtype():
         if confirmation():
             return listing
 
+def get_bedrooms():
+    while True:
+        print("\nHow many bedrooms?(Type )")
+        rooms_arr = []
+        while True:
+            try:
+                rooms = int(input("Please enter an integer(0-5) or (9) once you are done: "))
+                if rooms == 9:
+                    break
+                elif 0 < rooms < 6:
+                    rooms_arr.append(rooms)
+                else:
+                    print("Please input a valid integer.")
+            except ValueError:
+                print("Please input a valid integer.")
+        print(f"You are looking at houses with {rooms_arr} bedrooms.")
+        if confirmation():
+            return rooms_arr
+
 def get_budget():
     while True:
         print("\nWhat is your budget?")
@@ -47,4 +66,5 @@ def confirmation() -> bool:
 print("\n~~ Find your perfect property ~~")
 print("\nFirst we need to ask you some questions.")
 listing = get_listingtype()
+bedrooms = get_bedrooms()
 min_price, max_price = get_budget()
