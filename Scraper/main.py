@@ -3,9 +3,9 @@ from requests.models import PreparedRequest
 from bs4 import BeautifulSoup
 from curl_cffi import requests
 import pandas as pd
-import user_filter
-from models import Property
-from api import addProperty
+import Scraper.user_filter as user_filter
+from API.models import Property
+from API.api import addProperty
 
 # Global variables
 NAMES = []
