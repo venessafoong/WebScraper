@@ -1,10 +1,11 @@
 from fastapi import FastAPI
-from API.models import Property
+from models import Property
 import json
+import uvicorn
 
 app = FastAPI()
 
-with open('property.json', 'r') as f:
+with open('./API/property.json', 'r') as f:
     data = json.load(f)
     properties = data['property']
 
@@ -32,3 +33,6 @@ async def addProperty(property: Property):
         json.dump(data, f, indent = 4)
 
     return new_property
+
+if __name__ == '__main__':
+    uvicorn.run(app, port=8000, host='0.0.0.0')

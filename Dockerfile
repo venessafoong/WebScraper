@@ -1,9 +1,12 @@
 # Dockerfile, Image, Container
 FROM python:latest
 
-ADD main.py .
-ADD user_filter.py .
+WORKDIR /fastapi
 
-RUN pip install requests beautifulsoup4 pandas curl-cffi
+COPY requirements.txt .
 
-CMD [ "python", "./main.py" ]
+RUN pip3 install -r requirements.txt
+
+COPY ./API ./API
+
+CMD ["python3", "./API/api.py"]
